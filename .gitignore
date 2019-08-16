@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+bin/
+hex/
+
 # Object files
 *.o
 *.ko
