@@ -1,2 +1,2 @@
 # luino
-Luino is a Lua porting for AVR
+Luino is a Lua porting for Arduino
