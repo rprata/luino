@@ -28,6 +28,13 @@ F_CPU =16000000L
 FORMAT =ihex
 
 LUA_ENABLED=yes
+ifeq ($(LUA_ENABLED), yes)
+ENABLE_LUA_MATH=no
+ENABLE_LUA_DEBUG=no
+ENABLE_LUA_STRING=no
+ENABLE_LUA_TABLE=no
+ENABLE_LUA_COROUTINE=no
+endif
 
 #Source Settings
 SOURCE =main.c
@@ -42,42 +49,76 @@ ifeq ($(LUA_ENABLED), yes)
 SOURCE +=src/lua/lapi.c \
 		 src/lua/lcode.c \
 		 src/lua/lctype.c \
-		 src/lua/ldebug.c \
 		 src/lua/ldo.c \
 		 src/lua/lfunc.c \
 		 src/lua/lgc.c \
 		 src/lua/llex.c \
 		 src/lua/lmem.c \
-		 src/lua/ldump.c \
 		 src/lua/lobject.c \
 		 src/lua/lopcodes.c \
 		 src/lua/lparser.c \
 		 src/lua/lundump.c \
-		 src/lua/ldblib.c \
+		 src/lua/ldebug.c \
 		 src/lua/lstate.c \
-		 src/lua/lstring.c \
 		 src/lua/ltable.c \
-		 src/lua/ltm.c \
 		 src/lua/lvm.c \
-		 src/lua/lstrlib.c \
+		 src/lua/ltm.c \
+		 src/lua/lstring.c \
 		 src/lua/lzio.c \
-		 src/lua/lmathlib.c \
 		 src/lua/lauxlib.c \
 		 src/lua/lbaselib.c \
-		 src/lua/lcorolib.c \
-		 src/lua/ltablib.c \
-		 src/core/luino.c 
+		 src/core/luino.c
+
+
+ifeq ($(ENABLE_LUA_DEBUG), yes) 
+SOURCE +=src/lua/ldblib.c
+endif
+
+ifeq ($(ENABLE_LUA_MATH), yes)
+SOURCE +=src/lua/lmathlib.c
+endif
+
+ifeq ($(ENABLE_LUA_STRING), yes)
+SOURCE +=src/lua/ldump.c \
+		 src/lua/lstrlib.c
+endif
+
+ifeq ($(ENABLE_LUA_COROUTINE), yes)
+SOURCE +=src/lua/lcorolib.c
+endif
+
+ifeq ($(ENABLE_LUA_TABLE), yes)
+SOURCE +=src/lua/ltablib.c
+endif
+
 endif
 
 CFLAGS =-w -Os -ffunction-sections -fdata-sections
 
 ifeq ($(LUA_ENABLED), yes)
 CFLAGS+=-DLUA_USE_C89 -DLUA_C89_NUMBERS -DENABLE_LUA
-# CFLAGS+=-DENABLE_LUA_MATH 
-# CFLAGS+=-DENABLE_LUA_DEBUG 
-# CFLAGS+=-DENABLE_LUA_STRING 
-# CFLAGS+=-DENABLE_LUA_TABLE
-endif 
+
+ifeq ($(ENABLE_LUA_MATH), yes)
+CFLAGS+=-DENABLE_LUA_MATH 
+endif
+
+ifeq ($(ENABLE_LUA_DEBUG), yes)
+CFLAGS+=-DENABLE_LUA_DEBUG
+endif
+
+ifeq ($(ENABLE_LUA_STRING), yes)
+CFLAGS+=-DENABLE_LUA_STRING
+endif
+
+ifeq ($(ENABLE_LUA_COROUTINE), yes)
+CFLAGS+=-DENABLE_LUA_COROUTINE
+endif
+
+ifeq ($(ENABLE_LUA_TABLE), yes)
+CFLAGS+=-DENABLE_LUA_TABLE
+endif
+
+endif
 
 LDFLAGS=-Wl,--gc-sections
 

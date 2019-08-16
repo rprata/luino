@@ -64,6 +64,9 @@ void luino_init() {
 #ifdef ENABLE_LUA_STRING
 	luaopen_string(L);
 #endif
+#ifdef ENABLE_LUA_COROUTINE
+	luaopen_coroutine(L);
+#endif
 #ifdef ENABLE_LUA_TABLE
 	luaopen_table(L);
 #endif

@@ -17,7 +17,6 @@ undef lua_getlocaledecpoint
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <signal.h>
  
 #define l_signalT signed char volatile
 size_t strxfrm(char* dest, const char* src, size_t n);
