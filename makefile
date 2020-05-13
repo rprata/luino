@@ -29,12 +29,16 @@ FORMAT =ihex
 
 LUA_ENABLED=yes
 ifeq ($(LUA_ENABLED), yes)
-ENABLE_LUA_MATH=no
-ENABLE_LUA_DEBUG=no
-ENABLE_LUA_STRING=no
-ENABLE_LUA_TABLE=no
-ENABLE_LUA_COROUTINE=no
+ENABLE_LUA_MATH=yes
+ENABLE_LUA_DEBUG=yes
+ENABLE_LUA_STRING=yes
+ENABLE_LUA_TABLE=yes
+ENABLE_LUA_COROUTINE=yes
 endif
+
+
+#Boot source
+BOOT_SRC=src/boot/crt1.S
 
 #Source Settings
 SOURCE =main.c
@@ -93,7 +97,7 @@ endif
 
 endif
 
-CFLAGS =-w -Os -ffunction-sections -fdata-sections
+CFLAGS =-w -Os -ffunction-sections -fdata-sections -fno-inline-small-functions -mrelax -nostartfiles boot/crt1.o
 
 ifeq ($(LUA_ENABLED), yes)
 CFLAGS+=-DLUA_USE_C89 -DLUA_C89_NUMBERS -DENABLE_LUA
@@ -129,7 +133,8 @@ endif
 
 BIN =bin/firmware
 HEX =hex/firmware.hex
-MKDIR_P =mkdir -p bin/ hex/
+BOOT =boot/crt1.o
+MKDIR_P =mkdir -p bin/ hex/ boot/
 RM_RF =rm -rf bin/ hex/
 	
 #Upload Settings
@@ -142,6 +147,7 @@ UPLOAD_RATE_UNO =115200
 
 all:
 	$(MKDIR_P)
+	$(CC) -c $(BOOT_SRC) -o $(BOOT)
 	$(CC) $(CFLAGS) -DF_CPU=$(F_CPU) $(CINCS) -mmcu=$(MCU) $(SOURCE) $(LDFLAGS) -o $(BIN)
 	$(STRIP) -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag $(BIN)
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $(BIN) $(HEX)
