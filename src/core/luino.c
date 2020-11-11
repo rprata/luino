@@ -1,5 +1,6 @@
 #include <luino.h>
 #include <lstate.h>
+#include <lauxlib.h>
 
 size_t strxfrm(char* dest, const char* src, size_t n){
 	/* This implementation does not know about any locale but "C"... */
@@ -52,7 +53,7 @@ unsigned long int prng() {
 }
 
 
-void luino_init() {
+int luino_init(const char * lua_code) {
 	lua_State* L = luaL_newstate();
 	luaopen_base(L);
 #ifdef ENABLE_LUA_DEBUG
@@ -70,4 +71,8 @@ void luino_init() {
 #ifdef ENABLE_LUA_TABLE
 	luaopen_table(L);
 #endif
+	int res = luaL_loadbuffer(L, lua_code, strlen(lua_code), "main");
+	if (res) return -1;
+	res = lua_pcall(L, 0, LUA_MULTRET, 0);
+	if(res)	return -2;
 }

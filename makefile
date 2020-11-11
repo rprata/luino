@@ -33,7 +33,7 @@ ENABLE_LUA_MATH=yes
 ENABLE_LUA_DEBUG=yes
 ENABLE_LUA_STRING=yes
 ENABLE_LUA_TABLE=yes
-ENABLE_LUA_COROUTINE=yes
+ENABLE_LUA_COROUTINE=no
 endif
 
 
@@ -97,7 +97,12 @@ endif
 
 endif
 
-CFLAGS =-w -Os -ffunction-sections -fdata-sections -fno-inline-small-functions -mrelax -nostartfiles boot/crt1.o
+CFLAGS =-w -Os -ffunction-sections -fdata-sections
+
+USE_BOOT_FLAGS_OPT=yes
+ifeq ($(USE_BOOT_FLAGS_OPT), yes)
+CFLAGS +=-fno-inline-small-functions -mrelax -nostartfiles boot/crt1.o
+endif
 
 ifeq ($(LUA_ENABLED), yes)
 CFLAGS+=-DLUA_USE_C89 -DLUA_C89_NUMBERS -DENABLE_LUA

@@ -32,7 +32,7 @@ void loop() {
 
 int main(void) {
 #ifdef ENABLE_LUA
-	luino_init();
+	luino_init("print(\"Hello, world.\")");
 #endif
 	iosetpinnout(PIN13, output);
 	iosetpinnout(PIN9, input);

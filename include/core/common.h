@@ -13,7 +13,4 @@
 
 typedef enum { false = 0 , true } bool;
 
-#define SERIAL_PORT 0	
-#define BAUD 115200
-
 #endif

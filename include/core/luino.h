@@ -17,7 +17,7 @@ undef lua_getlocaledecpoint
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
- 
+
 #define l_signalT signed char volatile
 size_t strxfrm(char* dest, const char* src, size_t n);
 int strcoll(const char* s1, const char* s2);
@@ -29,5 +29,5 @@ unsigned long int prng();
 #define luai_makeseed prng
 #define l_randomizePivot prng
 
-void luino_init();
+int luino_init();
 #endif
