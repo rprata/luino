@@ -2,7 +2,9 @@
 #define ___LUINO_H__ 
 
 #define HUGE_VAL	(__builtin_huge_val())
-#define BUFSIZ 256
+#ifndef BUFSIZ
+#define BUFSIZ 512
+#endif
 #define M 0x7FFFFFFF
 
 #if defined(lua_getlocaledecpoint)

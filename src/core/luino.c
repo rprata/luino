@@ -1,6 +1,13 @@
 #include <luino.h>
-#include <lstate.h>
-#include <lauxlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <lua.h>
+#include <lualib.h>
+
+#define SIGINT -1
+
 
 size_t strxfrm(char* dest, const char* src, size_t n){
 	/* This implementation does not know about any locale but "C"... */
@@ -34,45 +41,13 @@ char* strerror(int errnum){
 	return "Uknown error";
 }
 
-static int _lastSeedNumber = 38;
-
-unsigned long int prng() {
-	unsigned long int x = _lastSeedNumber++;
-
-	if(x <= M-1){
-		_lastSeedNumber = 26;//More magic numbers!
-	}
-
-	x = (x >> 16) + ((x << 15) & M)  - (x >> 21) - ((x << 10) & M);
-
-	if(x < 0){
-		x += M;
-	}
-
-	return x;
-}
-
-
 int luino_init(const char * lua_code) {
-	lua_State* L = luaL_newstate();
-	luaopen_base(L);
-#ifdef ENABLE_LUA_DEBUG
-	luaopen_debug(L);
-#endif
 #ifdef ENABLE_LUA_MATH
-	luaopen_math(L);
+	mathlib_open();
 #endif
 #ifdef ENABLE_LUA_STRING
-	luaopen_string(L);
-#endif
-#ifdef ENABLE_LUA_COROUTINE
-	luaopen_coroutine(L);
-#endif
-#ifdef ENABLE_LUA_TABLE
-	luaopen_table(L);
-#endif
-	int res = luaL_loadbuffer(L, lua_code, strlen(lua_code), "main");
-	if (res) return -1;
-	res = lua_pcall(L, 0, LUA_MULTRET, 0);
-	if(res)	return -2;
+	strlib_open();
+#endif	
+	lua_dostring (lua_code);
+	return 0;
 }

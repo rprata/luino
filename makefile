@@ -30,10 +30,7 @@ FORMAT =ihex
 LUA_ENABLED=yes
 ifeq ($(LUA_ENABLED), yes)
 ENABLE_LUA_MATH=yes
-ENABLE_LUA_DEBUG=yes
 ENABLE_LUA_STRING=yes
-ENABLE_LUA_TABLE=yes
-ENABLE_LUA_COROUTINE=no
 endif
 
 
@@ -50,56 +47,27 @@ SOURCE +=src/core/hserial.c \
 		 src/core/pwm.c
 
 ifeq ($(LUA_ENABLED), yes)
-SOURCE +=src/lua/lapi.c \
-		 src/lua/lcode.c \
-		 src/lua/lctype.c \
-		 src/lua/ldo.c \
-		 src/lua/lfunc.c \
-		 src/lua/lgc.c \
-		 src/lua/llex.c \
-		 src/lua/lmem.c \
-		 src/lua/lobject.c \
-		 src/lua/lopcodes.c \
-		 src/lua/lparser.c \
-		 src/lua/lundump.c \
-		 src/lua/ldebug.c \
-		 src/lua/lstate.c \
-		 src/lua/ltable.c \
-		 src/lua/lvm.c \
-		 src/lua/ltm.c \
-		 src/lua/lstring.c \
-		 src/lua/lzio.c \
-		 src/lua/lauxlib.c \
-		 src/lua/lbaselib.c \
+SOURCE +=src/lua/hash.c \
+		 src/lua/inout.c \
+		 src/lua/lex_yy.c \
+		 src/lua/opcode.c \
+		 src/lua/table.c \
+		 src/lua/y_tab.c \
 		 src/core/luino.c
 
-
-ifeq ($(ENABLE_LUA_DEBUG), yes) 
-SOURCE +=src/lua/ldblib.c
-endif
-
 ifeq ($(ENABLE_LUA_MATH), yes)
-SOURCE +=src/lua/lmathlib.c
+SOURCE +=src/lua/mathlib.c
 endif
 
 ifeq ($(ENABLE_LUA_STRING), yes)
-SOURCE +=src/lua/ldump.c \
-		 src/lua/lstrlib.c
-endif
-
-ifeq ($(ENABLE_LUA_COROUTINE), yes)
-SOURCE +=src/lua/lcorolib.c
-endif
-
-ifeq ($(ENABLE_LUA_TABLE), yes)
-SOURCE +=src/lua/ltablib.c
+SOURCE +=src/lua/strlib.c
 endif
 
 endif
 
 CFLAGS =-w -Os -ffunction-sections -fdata-sections
 
-USE_BOOT_FLAGS_OPT=yes
+USE_BOOT_FLAGS_OPT=no
 ifeq ($(USE_BOOT_FLAGS_OPT), yes)
 CFLAGS +=-fno-inline-small-functions -mrelax -nostartfiles boot/crt1.o
 endif
@@ -111,20 +79,8 @@ ifeq ($(ENABLE_LUA_MATH), yes)
 CFLAGS+=-DENABLE_LUA_MATH 
 endif
 
-ifeq ($(ENABLE_LUA_DEBUG), yes)
-CFLAGS+=-DENABLE_LUA_DEBUG
-endif
-
 ifeq ($(ENABLE_LUA_STRING), yes)
 CFLAGS+=-DENABLE_LUA_STRING
-endif
-
-ifeq ($(ENABLE_LUA_COROUTINE), yes)
-CFLAGS+=-DENABLE_LUA_COROUTINE
-endif
-
-ifeq ($(ENABLE_LUA_TABLE), yes)
-CFLAGS+=-DENABLE_LUA_TABLE
 endif
 
 endif
