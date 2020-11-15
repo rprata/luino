@@ -23,7 +23,16 @@ AVRDUDE =avrdude
 STRIP =avr-strip
 
 #MCU Settings
+ARDUINO_MODEL= $(if $(model),$(model),uno)
+
+ifeq ($(ARDUINO_MODEL), uno)
 MCU =atmega328p
+endif
+
+ifeq ($(ARDUINO_MODEL), mega)
+MCU =atmega2560
+endif
+
 F_CPU =16000000L
 FORMAT =ihex
 
@@ -99,7 +108,11 @@ endif
 
 CFLAGS =-w -Os -ffunction-sections -fdata-sections
 
-USE_BOOT_FLAGS_OPT=yes
+ifeq ($(ARDUINO_MODEL), mega)
+CFLAGS +=-D__AVR_ATmega1280__
+endif
+
+USE_BOOT_FLAGS_OPT=no
 ifeq ($(USE_BOOT_FLAGS_OPT), yes)
 CFLAGS +=-fno-inline-small-functions -mrelax -nostartfiles boot/crt1.o
 endif
@@ -143,12 +156,23 @@ MKDIR_P =mkdir -p bin/ hex/ boot/
 RM_RF =rm -rf bin/ hex/
 	
 #Upload Settings
+ifeq ($(ARDUINO_MODEL), uno)
 AVRDUDE_PROGRAMMER =arduino
 AVR_PORT =/dev/ttyACM0
 AVRDUDE_FLAGS =-F -V
-AVRDUDE_FLASH =-U flash:w:$(HEX)
+endif
+
+ifeq ($(ARDUINO_MODEL), mega)
+AVRDUDE_PROGRAMMER =stk500v2
+AVR_PORT =/dev/ttyUSB0
+AVRDUDE_FLAGS =-F -V -D
+endif
+
+AVRDUDE_FLASH +=-U flash:w:$(HEX)
+
 UPLOAD_RATE_DUEMILANOVE =57600
 UPLOAD_RATE_UNO =115200
+UPLOAD_RATE_MEGA =115200
 
 all:
 	$(MKDIR_P)
@@ -162,6 +186,10 @@ flash-uno:
 
 flash-duemilanove:
 	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) -c $(AVRDUDE_PROGRAMMER) -p $(MCU) -P $(AVR_PORT) -b $(UPLOAD_RATE_DUEMILANOVE) $(AVRDUDE_FLASH)
+
+
+flash-mega:
+	sudo $(AVRDUDE) $(AVRDUDE_FLAGS) -c $(AVRDUDE_PROGRAMMER) -p $(MCU) -P $(AVR_PORT) -b $(UPLOAD_RATE_MEGA) $(AVRDUDE_FLASH)
 
 clean:
 	$(RM_RF)

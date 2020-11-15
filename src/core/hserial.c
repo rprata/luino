@@ -21,9 +21,10 @@ inline void store_char(unsigned char c, ring_buffer_t *rx_buffer);
 
 // Initialize rx_buffer arrays accordingly.
 #if defined(__AVR_ATmega1280__)
-	ring_buffer_t rx_buffer[4] = { { { 0 }, 0, 0 },
-								 { { 0 }, 0, 0 }
-								 { { 0 }, 0, 0 }
+	ring_buffer_t rx_buffer[4] = { 
+								 { { 0 }, 0, 0 },
+								 { { 0 }, 0, 0 },
+								 { { 0 }, 0, 0 },
 								 { { 0 }, 0, 0 } };
 #else
 	ring_buffer_t rx_buffer[1] =  { { { 0 }, 0, 0 } };
@@ -32,25 +33,25 @@ inline void store_char(unsigned char c, ring_buffer_t *rx_buffer);
 // serial macros
 #if defined(__AVR_ATmega1280__)
 
-SIGNAL(SIG_USART0_RECV)
+SIGNAL(SIG_UART0_RECV)
 {
 	unsigned char c = UDR0;
   store_char(c, &rx_buffer[0]);
 }
 
-SIGNAL(SIG_USART1_RECV)
+SIGNAL(SIG_UART1_RECV)
 {
 	unsigned char c = UDR1;
   store_char(c, &rx_buffer[1]);
 }
 
-SIGNAL(SIG_USART2_RECV)
+SIGNAL(SIG_UART2_RECV)
 {
 	unsigned char c = UDR2;
   store_char(c, &rx_buffer[2]);
 }
 
-SIGNAL(SIG_USART3_RECV)
+SIGNAL(SIG_UART3_RECV)
 {
 	unsigned char c = UDR3;
   store_char(c, &rx_buffer[3]);
